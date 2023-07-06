@@ -6,9 +6,40 @@
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>TimerJS</title>
+    <link href="https://fonts.googleapis.com/css2?family=Aldrich&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
+    <div class="timer">
+        <header class="timer__title">
+            <h1 class="timer__heading">Timer</h1>
+        </header>
+        <main class="timer__section">
+            <label class="timer__label">
+                <input class="timer__meter" type="number">
+                <a class="timer__subtitle">hours</a>
+            </label>
+            <label class="timer__label">
+                <input class="timer__meter" type="number">
+                <a class="timer__subtitle">minutes</a>
+            </label>
+            <label class="timer__label">
+                <input class="timer__meter" type="number">
+                <a class="timer__subtitle">seconds</a>
+            </label>
+        </main>
+        <article class="timer__images">
+            <button class="timer__button">
+                <img class="timer__svg" src="assets/icons/editIcon.svg" alt="">
+            </button>
+            <button class="timer__button">
+                <img class="timer__svg" src="assets/icons/playIcon.svg" alt="">
+            </button>
+            <button class="timer__button">
+                <img class="timer__svg" src="assets/icons/reloadIcon.svg" alt="">
+            </button>
+        </article>
+    </div>
 
 <script src="app.js"></script>
 </body>
