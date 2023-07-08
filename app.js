@@ -2,17 +2,27 @@ const hours = document.getElementById("hours")
 const minutes = document.getElementById("minutes")
 const seconds = document.getElementById("seconds")
 
+const editButton = document.getElementById("editButton")
 const playButton = document.getElementById("playButton")
+const reloadButton = document.getElementById("reloadButton")
+
+const playIcon = document.getElementById("playIcon")
 
 const minValue = 0;
 const maxValue = 59;
+const maxHoursValue = 99;
 
-const timer = () => {
-    setInterval(() => {
+let intervalId;
+
+let isWorking = false;
+
+const startTimer = () => {
+   intervalId = setInterval(() => {
         let secondsValue = seconds.value;
         let minutesValue = minutes.value;
         let hoursValue = hours.value;
         let value = Number(hours.value) + Number(minutes.value) + Number(seconds.value)
+        console.log(value);
 
         if (secondsValue > minValue) {
             secondsValue--;
@@ -26,6 +36,7 @@ const timer = () => {
                     minutesValue = maxValue;
                 } else {
                     hoursValue = minValue;
+                    minutesValue = minValue;
                     secondsValue = minValue;
                 }
             }
@@ -33,8 +44,26 @@ const timer = () => {
         seconds.value = secondsValue;
         minutes.value = minutesValue
         hours.value = hoursValue
-        console.log(value);
+        if (value === 0) {
+            console.log("Bzzzz!!!!!!!!")
+        }
     }, 1000)
 }
 
-playButton.addEventListener('click', timer)
+const stopTimer = () => {
+    clearInterval(intervalId)
+}
+
+const toggleTimer = () => {
+    if (!isWorking) {
+        startTimer()
+        isWorking = true;
+        playIcon.src = 'assets/icons/pauseIcon.svg';
+    } else {
+        clearInterval(intervalId);
+        isWorking = false;
+        playIcon.src = 'assets/icons/playIcon.svg';
+    }
+}
+
+playButton.addEventListener("click", toggleTimer)

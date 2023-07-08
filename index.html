@@ -16,27 +16,27 @@
         </header>
         <main class="timer__section">
             <label class="timer__label">
-                <input class="timer__meter" value="0" min="0" max="99" type="number" id="hours">
+                <input class="timer__meter" value="00" min="0" max="99" type="number" id="hours">
                 <a class="timer__subtitle">hours</a>
             </label>
             <label class="timer__label">
-                <input class="timer__meter" value="0" min="0" max="59" type="number" id="minutes">
+                <input class="timer__meter" value="00" min="0" max="59" type="number" id="minutes">
                 <a class="timer__subtitle">minutes</a>
             </label>
             <label class="timer__label">
-                <input class="timer__meter" value="0" min="0" max="59" type="number" id="seconds">
+                <input class="timer__meter" value="00" min="0" max="59" type="number" id="seconds">
                 <a class="timer__subtitle">seconds</a>
             </label>
         </main>
         <article class="timer__images">
-            <button class="timer__button">
-                <img class="timer__svg" src="assets/icons/editIcon.svg" alt="">
+            <button class="timer__button" id="editButton">
+                <img class="timer__svg" src="assets/icons/editIcon.svg">
             </button>
             <button class="timer__button" id="playButton">
-                <img class="timer__svg" src="assets/icons/playIcon.svg" alt="">
+                <img class="timer__svg" src="assets/icons/playIcon.svg" id="playIcon">
             </button>
-            <button class="timer__button">
-                <img class="timer__svg" src="assets/icons/reloadIcon.svg" alt="">
+            <button class="timer__button" id="reloadButton">
+                <img class="timer__svg" src="assets/icons/reloadIcon.svg">
             </button>
         </article>
     </div>
