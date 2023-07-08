@@ -7,6 +7,7 @@ const playButton = document.getElementById("playButton")
 const reloadButton = document.getElementById("reloadButton")
 
 const playIcon = document.getElementById("playIcon")
+const editIcon = document.getElementById("editIcon")
 
 const minValue = 0;
 const maxValue = 59;
@@ -15,6 +16,7 @@ const maxHoursValue = 99;
 let intervalId;
 
 let isWorking = false;
+let isEditMode = true;
 
 const startTimer = () => {
    intervalId = setInterval(() => {
@@ -66,4 +68,35 @@ const toggleTimer = () => {
     }
 }
 
+const toggleEditMode = () => {
+    isEditMode = !isEditMode;
+
+    if (isEditMode) {
+        clearInterval(intervalId);
+        hours.disabled = false;
+        minutes.disabled = false;
+        seconds.disabled = false;
+        hours.style.border = '1px solid white'
+        minutes.style.border = '1px solid white'
+        seconds.style.border = '1px solid white'
+        playIcon.src = 'assets/icons/playIcon.svg';
+        editIcon.src = 'assets/icons/checkIcon.svg';
+        playIcon.style.filter = 'brightness(1) invert(0.5)'
+        playButton.disabled = true;
+        playButton.style.cursor = 'context-menu';
+    } else {
+        hours.disabled = true;
+        minutes.disabled = true;
+        seconds.disabled = true;
+        hours.style.border = 'none'
+        minutes.style.border = 'none'
+        seconds.style.border = 'none'
+        editIcon.src = 'assets/icons/editIcon.svg';
+        playIcon.style.filter = 'brightness(0) invert(1)'
+        playButton.disabled = false;
+        playButton.style.cursor = 'pointer';
+    }
+};
+
 playButton.addEventListener("click", toggleTimer)
+editButton.addEventListener("click", toggleEditMode)

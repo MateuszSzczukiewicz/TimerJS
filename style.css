@@ -86,6 +86,11 @@ input[type=number] {
     transition: fill 0.1s ease-in;
 }
 
+#playButton {
+    filter: brightness(1) invert(0.5);
+    cursor: none;
+}
+
 .timer__svg:hover {
     filter: invert(0.5) brightness(0.5) sepia(1) hue-rotate(50deg) saturate(5);
 }
