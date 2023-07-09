@@ -1,212 +1,243 @@
-const hours = document.getElementById("hours")
-const minutes = document.getElementById("minutes")
-const seconds = document.getElementById("seconds")
+class Timer {
+    constructor(hours, minutes, seconds, editButton, playButton, reloadButton, clockButton, alarmSound, playIcon, editIcon, reloadIcon, clockIcon) {
+        this.hours = hours;
+        this.minutes = minutes;
+        this.seconds = seconds;
+        this.editButton = editButton;
+        this.playButton = playButton;
+        this.reloadButton = reloadButton;
+        this.clockButton = clockButton;
+        this.alarmSound = alarmSound;
+        this.playIcon = playIcon;
+        this.editIcon = editIcon;
+        this.reloadIcon = reloadIcon;
+        this.clockIcon = clockIcon;
 
-const editButton = document.getElementById("editButton")
-const playButton = document.getElementById("playButton")
-const reloadButton = document.getElementById("reloadButton")
-const clockButton = document.getElementById("clockButton")
-const alarmSound = document.getElementById("alarmSound")
+        this.minValue = 0;
+        this.maxValue = 59;
+        this.maxHoursValue = 99;
 
-const playIcon = document.getElementById("playIcon")
-const editIcon = document.getElementById("editIcon")
-const reloadIcon = document.getElementById("reloadIcon")
-const clockIcon = document.getElementById("clockIcon")
+        this.savedHours = this.minValue;
+        this.savedMinutes = this.minValue;
+        this.savedSeconds = this.minValue;
 
-const minValue = 0;
-const maxValue = 59;
-const maxHoursValue = 99;
+        this.intervalId = null;
+        this.isWorking = false;
+        this.isEditMode = true;
 
-let savedHours = minValue;
-let savedMinutes = minValue;
-let savedSeconds = minValue;
+        this.startTimer = this.startTimer.bind(this);
+        this.stopTimer = this.stopTimer.bind(this);
+        this.toggleTimer = this.toggleTimer.bind(this);
+        this.toggleEditMode = this.toggleEditMode.bind(this);
+        this.changeValue = this.changeValue.bind(this);
+        this.addZero = this.addZero.bind(this);
+        this.formatNumber = this.formatNumber.bind(this);
+        this.saveTime = this.saveTime.bind(this);
+        this.reloadTimer = this.reloadTimer.bind(this);
+        this.alarmOn = this.alarmOn.bind(this);
+        this.alarmOff = this.alarmOff.bind(this);
 
-let intervalId;
+        this.editButton.addEventListener("click", this.toggleEditMode);
+        this.playButton.addEventListener("click", this.toggleTimer);
+        this.reloadButton.addEventListener("click", this.reloadTimer);
+        this.clockButton.addEventListener("click", this.alarmOff);
+    }
 
-let isWorking = false;
-let isEditMode = true;
+    startTimer() {
+        this.intervalId = setInterval(() => {
+            let secondsValue = Number(this.seconds.value);
+            let minutesValue = Number(this.minutes.value);
+            let hoursValue = Number(this.hours.value);
 
-const startTimer = () => {
-    intervalId = setInterval(() => {
-        let secondsValue = Number(seconds.value);
-        let minutesValue = Number(minutes.value);
-        let hoursValue = Number(hours.value);
-
-        if (secondsValue > minValue) {
-            secondsValue--;
-        } else {
-            secondsValue = maxValue;
-            if (minutesValue > minValue) {
-                minutesValue = minutes.value - 1;
+            if (secondsValue > this.minValue) {
+                secondsValue--;
             } else {
-                if (hoursValue > minValue) {
-                    hoursValue = hours.value - 1;
-                    minutesValue = maxValue;
+                secondsValue = this.maxValue;
+                if (minutesValue > this.minValue) {
+                    minutesValue--;
                 } else {
-                    hoursValue = minValue;
-                    minutesValue = minValue;
-                    secondsValue = minValue;
+                    if (hoursValue > this.minValue) {
+                        hoursValue--;
+                        minutesValue = this.maxValue;
+                    } else {
+                        hoursValue = this.minValue;
+                        minutesValue = this.minValue;
+                        secondsValue = this.minValue;
+                    }
                 }
             }
-        }
-        seconds.value = formatNumber(secondsValue);
-        minutes.value = formatNumber(minutesValue);
-        hours.value = formatNumber(hoursValue);
+            this.seconds.value = this.formatNumber(secondsValue);
+            this.minutes.value = this.formatNumber(minutesValue);
+            this.hours.value = this.formatNumber(hoursValue);
 
-        alarmOn()
-    }, 1000)
-}
-
-const stopTimer = () => {
-    clearInterval(intervalId)
-}
-
-const toggleTimer = () => {
-    if (!isWorking) {
-        startTimer()
-        isWorking = true;
-        playIcon.src = 'assets/icons/pauseIcon.svg';
-    } else {
-        clearInterval(intervalId);
-        isWorking = false;
-        playIcon.src = 'assets/icons/playIcon.svg';
+            this.alarmOn();
+        }, 1000);
     }
-}
 
-const toggleEditMode = () => {
-    isEditMode = !isEditMode;
-
-    if (isEditMode) {
-        isWorking = false;
-        clearInterval(intervalId);
-        hours.disabled = false;
-        minutes.disabled = false;
-        seconds.disabled = false;
-        hours.style.border = '1px solid white'
-        minutes.style.border = '1px solid white'
-        seconds.style.border = '1px solid white'
-        playIcon.src = 'assets/icons/playIcon.svg';
-        editIcon.src = 'assets/icons/checkIcon.svg';
-        playIcon.style.filter = 'brightness(1) invert(0.5)'
-        playButton.disabled = true;
-        playButton.style.cursor = 'context-menu';
-    } else {
-        changeValue()
-        hours.disabled = true;
-        minutes.disabled = true;
-        seconds.disabled = true;
-        hours.style.border = 'none'
-        minutes.style.border = 'none'
-        seconds.style.border = 'none'
-        editIcon.src = 'assets/icons/editIcon.svg';
-        playIcon.style.filter = 'brightness(0) invert(1)'
-        playButton.disabled = false;
-        playButton.style.cursor = 'pointer';
-        playButton.style.pointerEvents = 'document';
-
-        saveTime()
+    stopTimer() {
+        clearInterval(this.intervalId);
     }
-};
 
-const changeValue = () => {
-    let secondsValue = Number(seconds.value);
-    let minutesValue = Number(minutes.value);
-    let hoursValue = Number(hours.value);
-
-    if (secondsValue > maxValue) {
-        const overflowSeconds = Math.floor(secondsValue / (maxValue + 1));
-        secondsValue %= (maxValue + 1);
-        minutesValue += overflowSeconds;
-
-        if (secondsValue > maxValue) {
-            secondsValue = maxValue;
+    toggleTimer() {
+        if (!this.isWorking) {
+            this.startTimer();
+            this.isWorking = true;
+            this.playIcon.src = "assets/icons/pauseIcon.svg";
+        } else {
+            this.stopTimer();
+            this.isWorking = false;
+            this.playIcon.src = "assets/icons/playIcon.svg";
         }
     }
 
-    if (minutesValue > maxValue) {
-        const overflowMinutes = Math.floor(minutesValue / (maxValue + 1));
-        secondsValue %= (maxValue + 1);
-        hoursValue += overflowMinutes;
+    toggleEditMode() {
+        this.isEditMode = !this.isEditMode;
 
-        if (minutesValue > maxValue) {
-            minutesValue = maxValue;
-            secondsValue = maxValue;
+        if (this.isEditMode) {
+            this.isWorking = false;
+            this.stopTimer();
+            this.hours.disabled = false;
+            this.minutes.disabled = false;
+            this.seconds.disabled = false;
+            this.hours.style.border = "1px solid white";
+            this.minutes.style.border = "1px solid white";
+            this.seconds.style.border = "1px solid white";
+            this.playIcon.src = "assets/icons/playIcon.svg";
+            this.editIcon.src = "assets/icons/checkIcon.svg";
+            this.playIcon.style.filter = "brightness(1) invert(0.5)";
+            this.playButton.disabled = true;
+            this.playButton.style.cursor = "context-menu";
+        } else {
+            this.changeValue();
+            this.hours.disabled = true;
+            this.minutes.disabled = true;
+            this.seconds.disabled = true;
+            this.hours.style.border = "none";
+            this.minutes.style.border = "none";
+            this.seconds.style.border = "none";
+            this.editIcon.src = "assets/icons/editIcon.svg";
+            this.playIcon.style.filter = "brightness(0) invert(1)";
+            this.playButton.disabled = false;
+            this.playButton.style.cursor = "pointer";
+            this.playButton.style.pointerEvents = "document";
+
+            this.saveTime();
         }
     }
 
-    if (hoursValue > maxHoursValue) {
-        hoursValue = maxHoursValue;
-        minutesValue = maxValue;
-        secondsValue = maxValue;
+    changeValue() {
+        let secondsValue = Number(this.seconds.value);
+        let minutesValue = Number(this.minutes.value);
+        let hoursValue = Number(this.hours.value);
+
+        if (secondsValue > this.maxValue) {
+            const overflowSeconds = Math.floor(secondsValue / (this.maxValue + 1));
+            secondsValue %= this.maxValue + 1;
+            minutesValue += overflowSeconds;
+
+            if (secondsValue > this.maxValue) {
+                secondsValue = this.maxValue;
+            }
+        }
+
+        if (minutesValue > this.maxValue) {
+            const overflowMinutes = Math.floor(minutesValue / (this.maxValue + 1));
+            minutesValue %= this.maxValue + 1;
+            hoursValue += overflowMinutes;
+
+            if (minutesValue > this.maxValue) {
+                minutesValue = this.maxValue;
+                secondsValue = this.maxValue;
+            }
+        }
+
+        if (hoursValue > this.maxHoursValue) {
+            hoursValue = this.maxHoursValue;
+            minutesValue = this.maxValue;
+            secondsValue = this.maxValue;
+        }
+
+        this.seconds.value = this.formatNumber(secondsValue);
+        this.minutes.value = this.formatNumber(minutesValue);
+        this.hours.value = this.formatNumber(hoursValue);
     }
 
-    seconds.value = formatNumber(secondsValue);
-    minutes.value = formatNumber(minutesValue);
-    hours.value = formatNumber(hoursValue);
-};
-
-const addZero = (value) => {
-    return value < 10 ? `0${value}` : value;
-}
-
-const formatNumber = (value) => {
-    return addZero(value)
-}
-
-const saveTime = () => {
-    savedHours = Number(hours.value);
-    savedMinutes = Number(minutes.value);
-    savedSeconds = Number(seconds.value);
-}
-
-const reloadTimer = () => {
-    seconds.value = formatNumber(savedSeconds)
-    minutes.value = formatNumber(savedMinutes)
-    hours.value = formatNumber(savedHours)
-}
-
-const alarmOn = () => {
-    const value = Number(hours.value) + Number(minutes.value) + Number(seconds.value)
-
-    if (value === 0) {
-        clockIcon.style.display = 'block'
-        alarmSound.play()
-        playIcon.style.filter = 'brightness(1) invert(0.5)';
-        playButton.disabled = true;
-        playButton.style.cursor = 'context-menu';
-        editIcon.style.filter = 'brightness(1) invert(0.5)';
-        editButton.disabled = true;
-        editButton.style.cursor = 'context-menu';
-        reloadIcon.style.filter = 'brightness(1) invert(0.5)';
-        reloadButton.disabled = true;
-        reloadButton.style.cursor = 'context-menu';
-
+    addZero(value) {
+        return value < 10 ? `0${value}` : value;
     }
-}
 
-const alarmOff = () => {
-    stopTimer();
-    clockIcon.style.display = 'none';
-    alarmSound.pause()
-    alarmSound.currentTime = 0
+    formatNumber(value) {
+        return this.addZero(value);
+    }
 
-    isWorking = false;
-    isEditMode = true;
+    saveTime() {
+        this.savedHours = Number(this.hours.value);
+        this.savedMinutes = Number(this.minutes.value);
+        this.savedSeconds = Number(this.seconds.value);
+    }
 
-    hours.disabled = false;
-    minutes.disabled = false;
-    seconds.disabled = false;
-    hours.style.border = '1px solid white';
-    minutes.style.border = '1px solid white';
-    seconds.style.border = '1px solid white';
-    playIcon.src = 'assets/icons/playIcon.svg';
-    editIcon.src = 'assets/icons/checkIcon.svg';
-    playIcon.style.filter = 'brightness(1) invert(0.5)';
-    playButton.disabled = true;
-    playButton.style.cursor = 'context-menu';
-}
+    reloadTimer() {
+        this.seconds.value = this.formatNumber(this.savedSeconds);
+        this.minutes.value = this.formatNumber(this.savedMinutes);
+        this.hours.value = this.formatNumber(this.savedHours);
+    }
 
-editButton.addEventListener("click", toggleEditMode)
-playButton.addEventListener("click", toggleTimer)
-reloadButton.addEventListener("click", reloadTimer)
-clockButton.addEventListener("click", alarmOff)
+    alarmOn() {
+        const value =
+            Number(this.hours.value) + Number(this.minutes.value) + Number(this.seconds.value);
+
+        if (value === 0) {
+            this.clockIcon.style.display = "block";
+            this.alarmSound.play();
+            this.playIcon.style.filter = "brightness(1) invert(0.5)";
+            this.playButton.disabled = true;
+            this.editIcon.style.filter = "brightness(1) invert(0.5)";
+            this.editButton.disabled = true;
+            this.reloadIcon.style.filter = "brightness(1) invert(0.5)";
+            this.reloadButton.disabled = true;
+        }
+    }
+
+    alarmOff() {
+        this.stopTimer();
+        this.clockIcon.style.display = "none";
+        this.alarmSound.pause();
+        this.alarmSound.currentTime = 0;
+
+        this.isWorking = false;
+        this.isEditMode = true;
+
+        this.hours.disabled = false;
+        this.minutes.disabled = false;
+        this.seconds.disabled = false;
+        this.hours.style.border = "1px solid white";
+        this.minutes.style.border = "1px solid white";
+        this.seconds.style.border = "1px solid white";
+        this.playIcon.src = "assets/icons/playIcon.svg";
+        this.editIcon.src = "assets/icons/checkIcon.svg";
+        this.playIcon.style.filter = "brightness(1) invert(0.5)";
+        this.editIcon.style.filter = "brightness(0) invert(1)";
+        this.reloadIcon.style.filter = "brightness(0) invert(1)";
+        this.playButton.disabled = false;
+        this.playButton.style.cursor = "pointer";
+        this.editButton.disabled = false;
+        this.editButton.style.cursor = "pointer";
+        this.reloadButton.disabled = false;
+        this.reloadButton.style.cursor = "pointer";
+      }
+    }
+
+    const timer = new Timer(
+      hours,
+      minutes,
+      seconds,
+      editButton,
+      playButton,
+      reloadButton,
+      clockButton,
+      alarmSound,
+      playIcon,
+      editIcon,
+      reloadIcon,
+      clockIcon
+    );
