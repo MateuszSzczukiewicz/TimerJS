@@ -13,6 +13,10 @@ const minValue = 0;
 const maxValue = 59;
 const maxHoursValue = 99;
 
+let savedHours = minValue;
+let savedMinutes = minValue;
+let savedSeconds = minValue;
+
 let intervalId;
 
 let isWorking = false;
@@ -20,10 +24,9 @@ let isEditMode = true;
 
 const startTimer = () => {
    intervalId = setInterval(() => {
-        let secondsValue = seconds.value;
-        let minutesValue = minutes.value;
-        let hoursValue = hours.value;
-        let value = Number(hours.value) + Number(minutes.value) + Number(seconds.value)
+        let secondsValue = Number(seconds.value);
+        let minutesValue = Number(minutes.value);
+        let hoursValue = Number(hours.value);
 
         if (secondsValue > minValue) {
             secondsValue--;
@@ -42,11 +45,14 @@ const startTimer = () => {
                 }
             }
         }
-        seconds.value = secondsValue;
-        minutes.value = minutesValue
-        hours.value = hoursValue
+        seconds.value = formatNumber(secondsValue);
+        minutes.value = formatNumber(minutesValue);
+        hours.value = formatNumber(hoursValue);
+
+        const value = hours.value + minutes.value + seconds.value
+
         if (value === 0) {
-            clearInterval(intervalId)
+            stopTimer();
         }
     }, 1000)
 }
@@ -96,27 +102,68 @@ const toggleEditMode = () => {
         playIcon.style.filter = 'brightness(0) invert(1)'
         playButton.disabled = false;
         playButton.style.cursor = 'pointer';
+
+        saveTime()
     }
 };
 
 const changeValue = () => {
-    if (seconds.value > maxValue) {
-        const restOfSecondsValue = seconds.value - (maxValue + 1);
-        seconds.value = restOfSecondsValue;
-        minutes.value = Number(minutes.value) + 1;
+    let secondsValue = Number(seconds.value);
+    let minutesValue = Number(minutes.value);
+    let hoursValue = Number(hours.value);
 
+    if (secondsValue > maxValue) {
+        const overflowSeconds = Math.floor(secondsValue / (maxValue + 1));
+        secondsValue %= (maxValue + 1);
+        minutesValue += overflowSeconds;
+
+        if (secondsValue > maxValue) {
+            secondsValue = maxValue;
+        }
     }
-    if (minutes.value > maxValue) {
-        const restOfMinutesValue = minutes.value - (maxValue + 1);
-        minutes.value = restOfMinutesValue;
-        hours.value = Number(hours.value) + 1;
+
+    if (minutesValue > maxValue) {
+        const overflowMinutes = Math.floor(minutesValue / (maxValue + 1));
+        secondsValue %= (maxValue + 1);
+        hoursValue += overflowMinutes;
+
+        if (minutesValue > maxValue) {
+            minutesValue = maxValue;
+            secondsValue = maxValue;
+        }
     }
-    if (hours.value > maxValue) {
-        hours.value = maxHoursValue;
-        seconds.value = maxValue;
-        minutes.value = maxValue;
+
+    if (hoursValue > maxHoursValue) {
+        hoursValue = maxHoursValue;
+        minutesValue = maxValue;
+        secondsValue = maxValue;
     }
+
+    seconds.value = formatNumber(secondsValue);
+    minutes.value = formatNumber(minutesValue);
+    hours.value = formatNumber(hoursValue);
 };
 
-playButton.addEventListener("click", toggleTimer)
+const addZero = (value) => {
+    return value < 10 ? `0${value}` : value;
+}
+
+const formatNumber = (value) => {
+    return addZero(value)
+}
+
+const saveTime = () => {
+    savedHours = Number(hours.value);
+    savedMinutes = Number(minutes.value);
+    savedSeconds = Number(seconds.value);
+}
+
+const reloadTimer = () => {
+    seconds.value = formatNumber(savedSeconds)
+    minutes.value = formatNumber(savedMinutes)
+    hours.value = formatNumber(savedHours)
+}
+
 editButton.addEventListener("click", toggleEditMode)
+playButton.addEventListener("click", toggleTimer)
+reloadButton.addEventListener("click", reloadTimer)
