@@ -83,16 +83,41 @@ input[type=number] {
     height: 35px;
     width: 35px;
     filter: brightness(0) invert(1);
-    transition: fill 0.1s ease-in;
+    transition: 0.1s ease-in;
 }
 
-#playButton {
+.timer__button--play {
+    cursor: context-menu;
+
 }
 
-#playIcon {
+.timer__svg--playIcon {
     filter: brightness(1) invert(0.5);
 }
 
+.timer__alarm {
+    position: absolute;
+    top: 70%;
+    left: 50%;
+    transform: translate(-50%)
+}
+
+@keyframes shake {
+    0% { transform: translateX(0); }
+    25% { transform: translateX(-2px); }
+    50% { transform: translateX(2px); }
+    75% { transform: translateX(-2px); }
+    100% { transform: translateX(0); }
+}
+
+.timer__svg--clockIcon {
+    filter: invert(36%) sepia(93%) saturate(7459%) hue-rotate(356deg) brightness(94%) contrast(127%);
+    height: 50px;
+    width: 50px;
+    display: none;
+    animation: shake 0.1s ease-in infinite;
+}
+
 .timer__svg:hover {
-    filter: invert(0.5) brightness(0.5) sepia(1) hue-rotate(50deg) saturate(5);
+    filter: invert(63%) sepia(39%) saturate(573%) hue-rotate(101deg) brightness(90%) contrast(93%);
 }

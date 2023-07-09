@@ -10,36 +10,42 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="timer">
-        <header class="timer__title">
-            <h1 class="timer__heading">Timer</h1>
-        </header>
-        <main class="timer__section">
-            <label class="timer__label">
-                <input class="timer__meter" value="00" min="0" max="99" type="number" id="hours">
-                <a class="timer__subtitle">hours</a>
-            </label>
-            <label class="timer__label">
-                <input class="timer__meter" value="00" min="0" max="59" type="number" id="minutes">
-                <a class="timer__subtitle">minutes</a>
-            </label>
-            <label class="timer__label">
-                <input class="timer__meter" value="00" min="0" max="59" type="number" id="seconds">
-                <a class="timer__subtitle">seconds</a>
-            </label>
-        </main>
-        <article class="timer__images">
-            <button class="timer__button" id="editButton">
-                <img class="timer__svg" src="assets/icons/checkIcon.svg" id="editIcon">
+<div class="timer">
+    <header class="timer__title">
+        <h1 class="timer__heading">Timer</h1>
+    </header>
+    <main class="timer__section">
+        <label class="timer__label">
+            <input class="timer__meter" value="00" min="0" max="99" type="number" id="hours">
+            <a class="timer__subtitle">hours</a>
+        </label>
+        <label class="timer__label">
+            <input class="timer__meter" value="00" min="0" max="59" type="number" id="minutes">
+            <a class="timer__subtitle">minutes</a>
+        </label>
+        <label class="timer__label">
+            <input class="timer__meter" value="00" min="0" max="59" type="number" id="seconds">
+            <a class="timer__subtitle">seconds</a>
+        </label>
+    </main>
+    <article class="timer__images">
+        <button class="timer__button" id="editButton">
+            <img class="timer__svg" src="assets/icons/checkIcon.svg" id="editIcon">
+        </button>
+        <button class="timer__button timer__button--play" id="playButton" disabled>
+            <img class="timer__svg timer__svg--playIcon" src="assets/icons/playIcon.svg" id="playIcon">
+        </button>
+        <button class="timer__button" id="reloadButton">
+            <img class="timer__svg" src="assets/icons/reloadIcon.svg" id="reloadIcon">
+        </button>
+    </article>
+    <section class="timer__alarm">
+            <audio id="alarmSound" src="assets/sounds/alarm.mp3" loop></audio>
+            <button class="timer__button" id="clockButton" title="Stop alarm">
+                <img class="timer__svg timer__svg--clockIcon" src="assets/icons/clockIcon.svg" id="clockIcon">
             </button>
-            <button class="timer__button" id="playButton" disabled>
-                <img class="timer__svg" src="assets/icons/playIcon.svg" id="playIcon">
-            </button>
-            <button class="timer__button" id="reloadButton">
-                <img class="timer__svg" src="assets/icons/reloadIcon.svg">
-            </button>
-        </article>
-    </div>
+    </section>
+</div>
 
 <script src="app.js"></script>
 </body>

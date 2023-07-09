@@ -5,9 +5,13 @@ const seconds = document.getElementById("seconds")
 const editButton = document.getElementById("editButton")
 const playButton = document.getElementById("playButton")
 const reloadButton = document.getElementById("reloadButton")
+const clockButton = document.getElementById("clockButton")
+const alarmSound = document.getElementById("alarmSound")
 
 const playIcon = document.getElementById("playIcon")
 const editIcon = document.getElementById("editIcon")
+const reloadIcon = document.getElementById("reloadIcon")
+const clockIcon = document.getElementById("clockIcon")
 
 const minValue = 0;
 const maxValue = 59;
@@ -23,7 +27,7 @@ let isWorking = false;
 let isEditMode = true;
 
 const startTimer = () => {
-   intervalId = setInterval(() => {
+    intervalId = setInterval(() => {
         let secondsValue = Number(seconds.value);
         let minutesValue = Number(minutes.value);
         let hoursValue = Number(hours.value);
@@ -49,11 +53,7 @@ const startTimer = () => {
         minutes.value = formatNumber(minutesValue);
         hours.value = formatNumber(hoursValue);
 
-        const value = hours.value + minutes.value + seconds.value
-
-        if (value === 0) {
-            stopTimer();
-        }
+        alarmOn()
     }, 1000)
 }
 
@@ -102,6 +102,7 @@ const toggleEditMode = () => {
         playIcon.style.filter = 'brightness(0) invert(1)'
         playButton.disabled = false;
         playButton.style.cursor = 'pointer';
+        playButton.style.pointerEvents = 'document';
 
         saveTime()
     }
@@ -164,6 +165,48 @@ const reloadTimer = () => {
     hours.value = formatNumber(savedHours)
 }
 
+const alarmOn = () => {
+    const value = Number(hours.value) + Number(minutes.value) + Number(seconds.value)
+
+    if (value === 0) {
+        clockIcon.style.display = 'block'
+        alarmSound.play()
+        playIcon.style.filter = 'brightness(1) invert(0.5)';
+        playButton.disabled = true;
+        playButton.style.cursor = 'context-menu';
+        editIcon.style.filter = 'brightness(1) invert(0.5)';
+        editButton.disabled = true;
+        editButton.style.cursor = 'context-menu';
+        reloadIcon.style.filter = 'brightness(1) invert(0.5)';
+        reloadButton.disabled = true;
+        reloadButton.style.cursor = 'context-menu';
+
+    }
+}
+
+const alarmOff = () => {
+    stopTimer();
+    clockIcon.style.display = 'none';
+    alarmSound.pause()
+    alarmSound.currentTime = 0
+
+    isWorking = false;
+    isEditMode = true;
+
+    hours.disabled = false;
+    minutes.disabled = false;
+    seconds.disabled = false;
+    hours.style.border = '1px solid white';
+    minutes.style.border = '1px solid white';
+    seconds.style.border = '1px solid white';
+    playIcon.src = 'assets/icons/playIcon.svg';
+    editIcon.src = 'assets/icons/checkIcon.svg';
+    playIcon.style.filter = 'brightness(1) invert(0.5)';
+    playButton.disabled = true;
+    playButton.style.cursor = 'context-menu';
+}
+
 editButton.addEventListener("click", toggleEditMode)
 playButton.addEventListener("click", toggleTimer)
 reloadButton.addEventListener("click", reloadTimer)
+clockButton.addEventListener("click", alarmOff)
