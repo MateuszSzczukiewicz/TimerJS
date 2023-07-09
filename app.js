@@ -24,7 +24,6 @@ const startTimer = () => {
         let minutesValue = minutes.value;
         let hoursValue = hours.value;
         let value = Number(hours.value) + Number(minutes.value) + Number(seconds.value)
-        console.log(value);
 
         if (secondsValue > minValue) {
             secondsValue--;
@@ -47,7 +46,7 @@ const startTimer = () => {
         minutes.value = minutesValue
         hours.value = hoursValue
         if (value === 0) {
-            console.log("Bzzzz!!!!!!!!")
+            clearInterval(intervalId)
         }
     }, 1000)
 }
@@ -86,6 +85,7 @@ const toggleEditMode = () => {
         playButton.disabled = true;
         playButton.style.cursor = 'context-menu';
     } else {
+        changeValue()
         hours.disabled = true;
         minutes.disabled = true;
         seconds.disabled = true;
@@ -96,6 +96,25 @@ const toggleEditMode = () => {
         playIcon.style.filter = 'brightness(0) invert(1)'
         playButton.disabled = false;
         playButton.style.cursor = 'pointer';
+    }
+};
+
+const changeValue = () => {
+    if (seconds.value > maxValue) {
+        const restOfSecondsValue = seconds.value - (maxValue + 1);
+        seconds.value = restOfSecondsValue;
+        minutes.value = Number(minutes.value) + 1;
+
+    }
+    if (minutes.value > maxValue) {
+        const restOfMinutesValue = minutes.value - (maxValue + 1);
+        minutes.value = restOfMinutesValue;
+        hours.value = Number(hours.value) + 1;
+    }
+    if (hours.value > maxValue) {
+        hours.value = maxHoursValue;
+        seconds.value = maxValue;
+        minutes.value = maxValue;
     }
 };
 
