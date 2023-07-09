@@ -72,6 +72,7 @@ const toggleEditMode = () => {
     isEditMode = !isEditMode;
 
     if (isEditMode) {
+        isWorking = false;
         clearInterval(intervalId);
         hours.disabled = false;
         minutes.disabled = false;

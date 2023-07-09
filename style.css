@@ -76,19 +76,21 @@ input[type=number] {
 
 .timer__button {
     all: unset;
+    cursor: pointer;
 }
 
 .timer__svg {
     height: 35px;
     width: 35px;
     filter: brightness(0) invert(1);
-    cursor: pointer;
     transition: fill 0.1s ease-in;
 }
 
 #playButton {
+}
+
+#playIcon {
     filter: brightness(1) invert(0.5);
-    cursor: none;
 }
 
 .timer__svg:hover {
